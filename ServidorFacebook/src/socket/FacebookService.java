@@ -36,7 +36,12 @@ public class FacebookService extends Thread {
 			//Read request from the client
 			String data = this.in.readUTF();			
 			System.out.println("   - FacebookService - Received data from '" + FacebookSocket.getInetAddress().getHostAddress() + ":" + FacebookSocket.getPort() + "' -> '" + data + "'");		
-			data= this.checkUsuarioFacebook(data);
+			if (data.contains(DELIMITER)) {
+				data= this.checkUsuarioFacebook(data);
+			}else {
+				data= this.checkEmailFacebook(data);
+			}
+			
 			//Send response to the client
 			this.out.writeUTF(data);			
 			System.out.println("   - FacebookService - Sent data to '" + FacebookSocket.getInetAddress().getHostAddress() + ":" + FacebookSocket.getPort() + "' -> '" + data.toUpperCase() + "'");
@@ -77,7 +82,31 @@ public class FacebookService extends Thread {
 		
 		return "false";
 	}
-	
+	public String checkEmailFacebook(String msg) { //			email@gmail.com
+		String translation = null;
+		
+		if (msg != null) {
+			try {
+						
+				String email = msg;
+				System.out.println("   Starting checking of " + email);
+		
+				if (email != null) {
+					if(hashFacebook.containsKey(email)) {
+							return "true";
+						
+					}
+					
+					System.out.println("   - Facebook server result: " + translation);
+				}
+			} catch (Exception e) {
+				System.out.println("   # FacebookService - Facebook error:" + e.getMessage());
+				translation = null;
+			}
+		}
+		
+		return "false";
+	}
 	
 }
 	
